@@ -1,0 +1,6 @@
+{
+    "BROWSERS" : ["ChromeBrowser", "FireFoxBrowser"] ,
+    "actualBrowser" : 0,
+    "login" : "e2-shut",
+    "password" : "passwordQA"
+}
