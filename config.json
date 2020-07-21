@@ -1,6 +1,8 @@
 {
     "BROWSERS" : ["ChromeBrowser", "FireFoxBrowser"] ,
     "actualBrowser" : 0,
+    "resolutionH" : 1920,
+    "resolutionW" : 1280,
     "login" : "e2-shut",
     "password" : "passwordQA"
 }

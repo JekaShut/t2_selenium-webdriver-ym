@@ -40,9 +40,11 @@ class BrowserFactory(metaclass=Singleton):
         try:
             if browsertype == "ChromeBrowser":
                 driver = ChromeBrowser().runBrowser()
+                driver.set_window_size(data['resolutionH'], data['resolutionW'])
                 return(driver)
             if browsertype == "FireFoxBrowser":
-                driver = FireFoxBrowser().runBrowser()# duplicating?
+                driver = FireFoxBrowser().runBrowser()
+                driver.set_window_size(data['resolutionH'], data['resolutionW'])
                 return(driver)
             raise AssertionError("Browser not found")
         except AssertionError as _e:
