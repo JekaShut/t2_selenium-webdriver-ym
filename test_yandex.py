@@ -12,6 +12,18 @@ import csv
 with open('config.json') as config_file:
     data = json.load(config_file)
 
+class JsonGetter():
+    def __init__(self):    
+        
+        self.BROWSERS = data["BROWSERS"]
+        self.actualBrowser = data["actualBrowser"]
+        self.resolutionH = data["resolutionH"]
+        self.resolutionW = data["resolutionW"]
+        self.login = data["login"]
+        self.password = data["password"]
+        self.SITE = data["SITE"]
+
+get = JsonGetter() 
 
 class ChromeBrowser():
     def runBrowser(self):
@@ -36,15 +48,16 @@ class Singleton(type):
 class BrowserFactory(metaclass=Singleton):        
     @staticmethod
     def getBrowser(browsertype):
+        
         try:
             if browsertype == "ChromeBrowser":
                 driver = ChromeBrowser().runBrowser()
-                driver.set_window_size(data['resolutionH'], data['resolutionW'])
+                driver.set_window_size(get.resolutionH, get.resolutionW)
                 
                 return(driver)
             if browsertype == "FireFoxBrowser":
                 driver = FireFoxBrowser().runBrowser()
-                driver.set_window_size(data['resolutionH'], data['resolutionW'])
+                driver.set_window_size(get.resolutionH, get.resolutionW)
                 return(driver)
             raise AssertionError("Browser not found")
         except AssertionError as _e:
@@ -57,7 +70,7 @@ class BrowserFactory(metaclass=Singleton):
 class TestMainPage(BrowserFactory):
     def test_checkPage(self):
         #driver = BrowserFactory.getBrowser(browsertype)
-        PAGE = "https://market.yandex.ru/"
+        PAGE = get.SITE
         driver.get(PAGE) 
         TITLE = driver.title
         assert TITLE == "Яндекс.Маркет — выбор и покупка товаров из проверенных интернет-магазинов", "Название страницы не совпадает с ОР"
@@ -75,7 +88,7 @@ class TestAutorize(BrowserFactory):
         assert TITLE == "Авторизация", "Название страницы не совпадает с ОР"
 
     def test_sendKeys_login(self):
-        login = data['login']
+        login = get.login
         loginfield = driver.find_element_by_id("passp-field-login")
         loginfield.send_keys(login)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
@@ -88,7 +101,7 @@ class TestAutorize(BrowserFactory):
         assert InputPass.text == "Введите пароль", "Название поля ввода пароля не совпадает с ОР"
 
     def test_sendKeys_password(self):
-        password = data['password']
+        password = get.password
         InputPass = driver.find_element_by_id("passp-field-passwd")    
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
@@ -170,8 +183,8 @@ class TestStop(BrowserFactory):
 class Start(metaclass=Singleton):
     def __init__(self):
         
-        self.actualBrowser = data['actualBrowser']
-        self.BROWSERS = data['BROWSERS'] 
+        self.actualBrowser = get.actualBrowser
+        self.BROWSERS = get.BROWSERS 
         self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])
         
    

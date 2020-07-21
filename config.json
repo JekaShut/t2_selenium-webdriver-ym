@@ -3,6 +3,8 @@
     "actualBrowser" : 0,
     "resolutionH" : 1920,
     "resolutionW" : 1280,
+    "SITE" : "https://market.yandex.ru/",
     "login" : "e2-shut",
     "password" : "passwordQA"
+
 }
