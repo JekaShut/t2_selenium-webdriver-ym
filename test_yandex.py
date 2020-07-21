@@ -94,7 +94,7 @@ class TestAutorize(BrowserFactory):
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        #time.sleep(3)
+        time.sleep(2)
 
     def test_checkAutorize(self):
         handle = driver.window_handles
@@ -102,17 +102,18 @@ class TestAutorize(BrowserFactory):
         #checkPage = driver.find_elements_by_xpath("//a/span/span")
         #assert checkPage[0].text == 'Избранное', "Название элемента не совпадает с ОР"
         
-class TestCategiries(BrowserFactory):
+class TestCategiries(BrowserFactory):                                                                                         #ШАГ 3
     def test_getCategories(self):
-        categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
-        categories.pop(0)
-        randomcat = random.choice(categories)
+        self.categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
+        self.categories.pop(0)
+        randomcat = random.choice(self.categories)
         rndtxt = randomcat.find_element_by_xpath("div/a/span").text
         randomcat.click()
         time.sleep(2)
         TITLE = driver.find_element_by_tag_name("h1")
         assert rndtxt == TITLE.text, "Название категории не совпадает с заголовком категории"
-    
+
+class TestCategiriesAtMainPage():    
     def test_goToMainPage(self):
         time.sleep(2)
         TestMainPage().test_checkPage()
@@ -132,8 +133,32 @@ class TestCategiries(BrowserFactory):
                 writer.writerow([n, elementW.text])
                 n = n + 1
 
+    def test_compareCategories(self):    
+        x3 = []
+        x6 = []                                                                                        #ШАГ 6
+        with open("test.csv", "r", newline="") as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=";")
+            for row in reader:
+                x3.append(row['Element'])
+
+        categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
+        categories.pop(0)
+        for cat in categories:
+            catTXT = cat.find_element_by_xpath("div/a/span").text
+            x6.append(catTXT)
         
-        
+        for elem in x6:
+            assert elem in x3 == True, "Элемент "+ elem +" отсутствует в «Популярные категории»"
+
+class TestLogOut(BrowserFactory):
+    def test_logout(self):
+        time.sleep(2)
+        TestMainPage().test_checkPage()
+        forDOM = driver.find_element_by_xpath("//div[6]/div/div/div/div/div/div/div/button")
+        forDOM.click()
+        time.sleep(1)
+        exitsite = driver.find_element_by_xpath("//div[2]/a[6]/span")
+        exitsite.click()
         
         
     
