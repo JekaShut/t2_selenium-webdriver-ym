@@ -1,8 +1,14 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pytest
 import json
 import time
 import random
+import csv
+
+### BUG ###
+# 1 из элементов категорий скорее всего лишний, иногда прокает exception 
 
 with open('config.json') as config_file:
     data = json.load(config_file)
@@ -60,6 +66,7 @@ class TestMainPage(BrowserFactory):
         
 
 class TestAutorize(BrowserFactory):
+    #wait = WebDriverWait(driver, 10)
     def test_checkPage(self):
         enter = driver.find_element_by_xpath("//span[contains(text(),'Войти')]/..")
         enter.click()
@@ -74,7 +81,10 @@ class TestAutorize(BrowserFactory):
         loginfield.send_keys(login)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        time.sleep(3)
+        #time.sleep(3)
+        #wait = WebDriverWait(driver, 10)
+        #InputPass = wait.until(EC.element_to_be_selected(driver.find_element_by_class_name("passp-form-field__label")))
+        time.sleep(2)
         InputPass = driver.find_element_by_class_name("passp-form-field__label")    
         assert InputPass.text == "Введите пароль", "Название поля ввода пароля не совпадает с ОР"
 
@@ -84,7 +94,7 @@ class TestAutorize(BrowserFactory):
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        time.sleep(3)
+        #time.sleep(3)
 
     def test_checkAutorize(self):
         handle = driver.window_handles
@@ -106,6 +116,22 @@ class TestCategiries(BrowserFactory):
     def test_goToMainPage(self):
         time.sleep(2)
         TestMainPage().test_checkPage()
+        categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
+        categories[0].click()
+        time.sleep(4)
+        
+    def test_writeToCSV(self):
+        n = 1
+        categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[1]/div")
+        
+        with open("test.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter=";")
+            writer.writerow(["ID", "Element"])
+            for element in categories:
+                elementW = element.find_element_by_xpath("button/a/span")
+                writer.writerow([n, elementW.text])
+                n = n + 1
+
         
         
         
@@ -113,6 +139,7 @@ class TestCategiries(BrowserFactory):
     
 class Start(metaclass=Singleton):
     def __init__(self):
+        
         self.actualBrowser = data['actualBrowser']
         self.BROWSERS = data['BROWSERS'] 
         self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])

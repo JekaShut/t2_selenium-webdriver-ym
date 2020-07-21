@@ -5,7 +5,7 @@ JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't fin
 1595332605877	Marionette	INFO	Stopped listening on port 58686
 
 ###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
-
+ 
 
 ###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
 
@@ -39,6 +39,28 @@ JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't fin
 1595336326694	Marionette	INFO	Listening on port 63197
 1595336326807	Marionette	WARN	TLS certificate errors will be ignored for this session
 1595336342313	Marionette	INFO	Stopped listening on port 63197
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1595345392463	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\Eugene\\AppData\\Local\\Temp\\rust_mozprofilebckUf5"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1595345395560	Marionette	INFO	Listening on port 55218
+1595345395633	Marionette	WARN	TLS certificate errors will be ignored for this session
+1595345410996	Marionette	INFO	Stopped listening on port 55218
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1595345420279	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\Eugene\\AppData\\Local\\Temp\\rust_mozprofileAZT7UI"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1595345423053	Marionette	INFO	Listening on port 55330
+1595345423445	Marionette	WARN	TLS certificate errors will be ignored for this session
+1595345431736	Marionette	INFO	Stopped listening on port 55330
 
 ###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
