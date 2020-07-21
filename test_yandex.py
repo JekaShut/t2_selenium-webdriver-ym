@@ -7,14 +7,6 @@ with open('config.json') as config_file:
     data = json.load(config_file)
 
 
-
-################################################
-#
-BROWSERS = ["ChromeBrowser", "FireFoxBrowser"]
-#
-################################################
-
-
 class ChromeBrowser():
     def runBrowser(self):
         driver = webdriver.Chrome()
@@ -62,7 +54,7 @@ class TestMainPage(BrowserFactory):
         PAGE = "https://market.yandex.ru/"
         driver.get(PAGE) 
         TITLE = driver.title
-        assert TITLE == "Яндекс.Маркет — выбор и покупка товаров из проверенных интернет-магазинов"
+        assert TITLE == "Яндекс.Маркет — выбор и покупка товаров из проверенных интернет-магазинов", "Название страницы не совпадает с ОР"
         
         
 
@@ -73,31 +65,33 @@ class TestAutorize(BrowserFactory):
         handles = driver.window_handles
         driver.switch_to.window(handles[1])
         TITLE = driver.title 
-        assert TITLE == "Авторизация"
+        assert TITLE == "Авторизация", "Название страницы не совпадает с ОР"
+
     def test_sendKeys_login(self):
         login = data['login']
-        password = data['password']
         loginfield = driver.find_element_by_id("passp-field-login")
         loginfield.send_keys(login)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        time.sleep(1)
-        x = 1
-        while x == 1:
-            try :
-                InputPass = driver.find_element_by_id("passp-field-passwd")
-                x = 0
-            except:
-                time.sleep(3)
-                x = 1
+        time.sleep(3)
+        InputPass = driver.find_element_by_class_name("passp-form-field__label")    
+        assert InputPass.text == "Введите пароль", "Название поля ввода пароля не совпадает с ОР"
+
+    def test_sendKeys_password(self):
+        password = data['password']
+        InputPass = driver.find_element_by_id("passp-field-passwd")    
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
         time.sleep(5)
+
+    def checkAutorize(self):
         handle = driver.window_handles
         driver.switch_to.window(handle[0])
-        checkPage = driver.find_elements_by_xpath("//a/span/div/span")
-        assert checkPage[1].text == 'e2.shut'
+        TITLE = driver.find_element_by_xpath("/html/head/title[2]")
+        assert TITLE == "Яндекс.Маркет", "Название страницы не совпадает с ОР"
+        checkPage = driver.find_elements_by_xpath("//a/span/span")
+        assert checkPage[0].text == 'Избранное', "Название элемента не совпадает с ОР"
         
         
         
@@ -105,7 +99,8 @@ class TestAutorize(BrowserFactory):
 class Start(metaclass=Singleton):
     def __init__(self):
         self.actualBrowser = data['actualBrowser']
-        self.driver = BrowserFactory.getBrowser(BROWSERS[self.actualBrowser])
+        self.BROWSERS = data['BROWSERS']
+        self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])
         
         
 driver = Start().driver
