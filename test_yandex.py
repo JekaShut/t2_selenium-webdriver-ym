@@ -99,7 +99,7 @@ class TestAutorize(BrowserFactory):
 class Start(metaclass=Singleton):
     def __init__(self):
         self.actualBrowser = data['actualBrowser']
-        self.BROWSERS = data['BROWSERS']
+        self.BROWSERS = data['BROWSERS'] 
         self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])
         
         
