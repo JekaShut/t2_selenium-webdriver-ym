@@ -7,8 +7,7 @@ import time
 import random
 import csv
 
-### BUG ###
-# 1 из элементов категорий скорее всего лишний, иногда прокает exception 
+
 
 with open('config.json') as config_file:
     data = json.load(config_file)
@@ -41,6 +40,7 @@ class BrowserFactory(metaclass=Singleton):
             if browsertype == "ChromeBrowser":
                 driver = ChromeBrowser().runBrowser()
                 driver.set_window_size(data['resolutionH'], data['resolutionW'])
+                
                 return(driver)
             if browsertype == "FireFoxBrowser":
                 driver = FireFoxBrowser().runBrowser()
@@ -52,10 +52,7 @@ class BrowserFactory(metaclass=Singleton):
 
 
         
-class StartTests():
-    def runPositiveTests(self):
-        TestMainPage().test_checkPage()
-        pass
+
 
 class TestMainPage(BrowserFactory):
     def test_checkPage(self):
@@ -113,7 +110,7 @@ class TestCategiries(BrowserFactory):                                           
         randomcat.click()
         time.sleep(2)
         TITLE = driver.find_element_by_tag_name("h1")
-        assert rndtxt == TITLE.text, "Название категории не совпадает с заголовком категории"
+        assert rndtxt == TITLE.text, "Название категории '" + rndtxt + "' не совпадает с заголовком категории '" + TITLE.text + "'" 
 
 class TestCategiriesAtMainPage():    
     def test_goToMainPage(self):
@@ -150,7 +147,7 @@ class TestCategiriesAtMainPage():
             x6.append(catTXT)
         
         for elem in x6:
-            assert elem in x3 == True, "Элемент "+ elem +" отсутствует в «Популярные категории»"
+            assert elem in x3 == True, "Элемент '"+ elem +"' отсутствует в «Популярные категории»"
 
 class TestLogOut(BrowserFactory):
     def test_logout(self):
@@ -163,6 +160,12 @@ class TestLogOut(BrowserFactory):
         exitsite.click()
         
         
+        
+class TestStop(BrowserFactory):
+    def test_seleniumQuit(self):
+        time.sleep(2)
+        driver.stop_client()
+        driver.quit()    
     
 class Start(metaclass=Singleton):
     def __init__(self):
@@ -175,11 +178,3 @@ class Start(metaclass=Singleton):
 driver = Start().driver 
 
 
-
-#driver = BrowserFactory.getBrowser(BROWSERS[0])
-#driver1 = BrowserFactory.getBrowser(BROWSERS[0])
-
-#StartTests().runPositiveTests()
-#if __name__ == "__main__":
-#    driver = BrowserFactory.getBrowser(BROWSERS[0]) # тут вызов браузеров из жсона
-#    
