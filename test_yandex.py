@@ -69,7 +69,6 @@ class BrowserFactory(metaclass=Singleton):
 
 class TestMainPage(BrowserFactory):
     def test_checkPage(self):
-        #driver = BrowserFactory.getBrowser(browsertype)
         PAGE = get.SITE
         driver.get(PAGE) 
         TITLE = driver.title
@@ -78,7 +77,6 @@ class TestMainPage(BrowserFactory):
         
 
 class TestAutorize(BrowserFactory):
-    #wait = WebDriverWait(driver, 10)
     def test_checkPage(self):
         enter = driver.find_element_by_xpath("//span[contains(text(),'Войти')]/..")
         enter.click()
@@ -93,16 +91,14 @@ class TestAutorize(BrowserFactory):
         loginfield.send_keys(login)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        #time.sleep(3)
-        #wait = WebDriverWait(driver, 10)
-        #InputPass = wait.until(EC.element_to_be_selected(driver.find_element_by_class_name("passp-form-field__label")))
         time.sleep(2)
-        InputPass = driver.find_element_by_class_name("passp-form-field__label")    
+        InputPass = driver.find_element_by_class_name("passp-form-field__label")  
         assert InputPass.text == "Введите пароль", "Название поля ввода пароля не совпадает с ОР"
 
     def test_sendKeys_password(self):
+        time.sleep(1)
         password = get.password
-        InputPass = driver.find_element_by_id("passp-field-passwd")    
+        InputPass = driver.find_element_by_id("passp-field-passwd")  
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
@@ -111,10 +107,13 @@ class TestAutorize(BrowserFactory):
     def test_checkAutorize(self):
         handle = driver.window_handles
         driver.switch_to.window(handle[0])
-        #checkPage = driver.find_elements_by_xpath("//a/span/span")
-        #assert checkPage[0].text == 'Избранное', "Название элемента не совпадает с ОР"
+        menuButton = driver.find_element_by_xpath("//div[6]/div/div/div/div/div/div/div/button")
+        menuButton.click()
+        time.sleep(2)
+        checkAuth = driver.find_element_by_xpath("//div[6]/div/div/div/div/div/div/div/div/div[2]")
+        assert checkAuth.text == get.login, "Логин не соответствует ожидаемому"
         
-class TestCategiries(BrowserFactory):                                                                                         #ШАГ 3
+class TestCategiries(BrowserFactory):                                                                                         
     def test_getCategories(self):
         self.categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
         self.categories.pop(0)
@@ -131,7 +130,7 @@ class TestCategiriesAtMainPage():
         TestMainPage().test_checkPage()
         categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
         categories[0].click()
-        time.sleep(4)
+        time.sleep(2)
         
     def test_writeToCSV(self):
         n = 1
@@ -147,7 +146,7 @@ class TestCategiriesAtMainPage():
 
     def test_compareCategories(self):    
         x3 = []
-        x6 = []                                                                                        #ШАГ 6
+        x6 = []                                                                                        
         with open("test.csv", "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile, delimiter=";")
             for row in reader:
@@ -171,7 +170,11 @@ class TestLogOut(BrowserFactory):
         time.sleep(1)
         exitsite = driver.find_element_by_xpath("//div[2]/a[6]/span")
         exitsite.click()
-        
+        try:
+            enter = driver.find_element_by_xpath("//span[contains(text(),'Войти')]/..").text
+        except:
+            enter = "logged in"
+        assert enter == "Войти"
         
         
 class TestStop(BrowserFactory):
