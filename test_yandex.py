@@ -2,6 +2,7 @@ from selenium import webdriver
 import pytest
 import json
 import time
+import random
 
 with open('config.json') as config_file:
     data = json.load(config_file)
@@ -83,15 +84,29 @@ class TestAutorize(BrowserFactory):
         InputPass.send_keys(password)
         enter = driver.find_element_by_css_selector(".passp-sign-in-button")
         enter.click()
-        time.sleep(5)
+        time.sleep(3)
 
-    def checkAutorize(self):
+    def test_checkAutorize(self):
         handle = driver.window_handles
         driver.switch_to.window(handle[0])
-        TITLE = driver.find_element_by_xpath("/html/head/title[2]")
-        assert TITLE == "Яндекс.Маркет", "Название страницы не совпадает с ОР"
-        checkPage = driver.find_elements_by_xpath("//a/span/span")
-        assert checkPage[0].text == 'Избранное', "Название элемента не совпадает с ОР"
+        #checkPage = driver.find_elements_by_xpath("//a/span/span")
+        #assert checkPage[0].text == 'Избранное', "Название элемента не совпадает с ОР"
+        
+class TestCategiries(BrowserFactory):
+    def test_getCategories(self):
+        categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
+        categories.pop(0)
+        randomcat = random.choice(categories)
+        rndtxt = randomcat.find_element_by_xpath("div/a/span").text
+        randomcat.click()
+        time.sleep(2)
+        TITLE = driver.find_element_by_tag_name("h1")
+        assert rndtxt == TITLE.text, "Название категории не совпадает с заголовком категории"
+    
+    def test_goToMainPage(self):
+        time.sleep(2)
+        TestMainPage().test_checkPage()
+        
         
         
         
@@ -102,9 +117,8 @@ class Start(metaclass=Singleton):
         self.BROWSERS = data['BROWSERS'] 
         self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])
         
-        
-driver = Start().driver
-
+   
+driver = Start().driver 
 
 
 
