@@ -15,10 +15,8 @@ with open('config.json') as config_file:
 class JsonGetter():
     def __init__(self):    
         
-        self.BROWSERS = data["BROWSERS"]
+        
         self.actualBrowser = data["actualBrowser"]
-        self.resolutionH = data["resolutionH"]
-        self.resolutionW = data["resolutionW"]
         self.login = data["login"]
         self.password = data["password"]
         self.SITE = data["SITE"]
@@ -52,12 +50,14 @@ class BrowserFactory(metaclass=Singleton):
         try:
             if browsertype == "ChromeBrowser":
                 driver = ChromeBrowser().runBrowser()
-                driver.set_window_size(get.resolutionH, get.resolutionW)
+                #driver.set_window_size(get.resolutionH, get.resolutionW)
+                driver.maximize_window()
                 
                 return(driver)
             if browsertype == "FireFoxBrowser":
                 driver = FireFoxBrowser().runBrowser()
-                driver.set_window_size(get.resolutionH, get.resolutionW)
+                #driver.set_window_size(get.resolutionH, get.resolutionW)
+                driver.maximize_window()
                 return(driver)
             raise AssertionError("Browser not found")
         except AssertionError as _e:
@@ -136,7 +136,7 @@ class TestCategiriesAtMainPage():
         n = 1
         categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div/div[1]/div")
         
-        with open("test.csv", "w", newline="") as csvfile:
+        with open("test.csv", "w", newline="", encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=";")
             writer.writerow(["ID", "Element"])
             for element in categories:
@@ -155,11 +155,12 @@ class TestCategiriesAtMainPage():
         categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
         categories.pop(0)
         for cat in categories:
-            catTXT = cat.find_element_by_xpath("div/a/span").text
-            x6.append(catTXT)
-        
+            if cat.is_displayed(): #13
+                catTXT = cat.find_element_by_xpath("div/a/span").text
+                x6.append(catTXT)
         for elem in x6:
             assert elem in x3 == True, "Элемент '"+ elem +"' отсутствует в «Популярные категории»"
+            
 
 class TestLogOut(BrowserFactory):
     def test_logout(self):
@@ -185,10 +186,13 @@ class TestStop(BrowserFactory):
     
 class Start(metaclass=Singleton):
     def __init__(self):
-        
+        BROWSERS = ["ChromeBrowser", "FireFoxBrowser"]
         self.actualBrowser = get.actualBrowser
-        self.BROWSERS = get.BROWSERS 
-        self.driver = BrowserFactory.getBrowser(self.BROWSERS[self.actualBrowser])
+        if self.actualBrowser in BROWSERS:
+            BROWSERindex = BROWSERS.index(self.actualBrowser)
+        else:
+            raise Exception("Такого браузера нет!")
+        self.driver = BrowserFactory.getBrowser(BROWSERS[BROWSERindex])
         
    
 driver = Start().driver 
