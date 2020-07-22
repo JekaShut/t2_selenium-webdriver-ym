@@ -11,7 +11,8 @@ import csv
 
 with open('config.json') as config_file:
     data = json.load(config_file)
-
+    
+BROWSERS = ["ChromeBrowser", "FireFoxBrowser"]
 class JsonGetter():
     def __init__(self):    
         
@@ -48,13 +49,13 @@ class BrowserFactory(metaclass=Singleton):
     def getBrowser(browsertype):
         
         try:
-            if browsertype == "ChromeBrowser":
+            if browsertype == BROWSERS[BROWSERS.index(browsertype)]:
                 driver = ChromeBrowser().runBrowser()
                 #driver.set_window_size(get.resolutionH, get.resolutionW)
                 driver.maximize_window()
                 
                 return(driver)
-            if browsertype == "FireFoxBrowser":
+            if browsertype == BROWSERS[BROWSERS.index(browsertype)]:
                 driver = FireFoxBrowser().runBrowser()
                 #driver.set_window_size(get.resolutionH, get.resolutionW)
                 driver.maximize_window()
@@ -113,7 +114,8 @@ class TestAutorize(BrowserFactory):
         checkAuth = driver.find_element_by_xpath("//div[6]/div/div/div/div/div/div/div/div/div[2]")
         assert checkAuth.text == get.login, "Логин не соответствует ожидаемому"
         
-class TestCategiries(BrowserFactory):                                                                                         
+class TestCategiries(BrowserFactory):  
+                                                                                        
     def test_getCategories(self):
         self.categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
         self.categories.pop(0)
@@ -123,8 +125,9 @@ class TestCategiries(BrowserFactory):
         time.sleep(2)
         TITLE = driver.find_element_by_tag_name("h1")
         assert rndtxt == TITLE.text, "Название категории '" + rndtxt + "' не совпадает с заголовком категории '" + TITLE.text + "'" 
-
+csvData = ["ID", "Element"] 
 class TestCategiriesAtMainPage():    
+      
     def test_goToMainPage(self):
         time.sleep(2)
         TestMainPage().test_checkPage()
@@ -138,7 +141,7 @@ class TestCategiriesAtMainPage():
         
         with open("test.csv", "w", newline="", encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=";")
-            writer.writerow(["ID", "Element"])
+            writer.writerow(csvData)
             for element in categories:
                 elementW = element.find_element_by_xpath("button/a/span")
                 writer.writerow([n, elementW.text])
@@ -150,7 +153,7 @@ class TestCategiriesAtMainPage():
         with open("test.csv", "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile, delimiter=";")
             for row in reader:
-                x3.append(row['Element'])
+                x3.append(row[csvData[1]])
 
         categories = driver.find_elements_by_xpath("//div/div[3]/noindex/div/div/div/div/div[1]/div[1]/div")
         categories.pop(0)
@@ -186,7 +189,7 @@ class TestStop(BrowserFactory):
     
 class Start(metaclass=Singleton):
     def __init__(self):
-        BROWSERS = ["ChromeBrowser", "FireFoxBrowser"]
+        
         self.actualBrowser = get.actualBrowser
         if self.actualBrowser in BROWSERS:
             BROWSERindex = BROWSERS.index(self.actualBrowser)
