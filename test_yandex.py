@@ -1,6 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+#from webdrivermanager import ChromeDriverManager
 import pytest
 import json
 import time
@@ -26,12 +29,12 @@ get = JsonGetter()
 
 class ChromeBrowser():
     def runBrowser(self):
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(ChromeDriverManager().install())
         return(driver)
 
 class FireFoxBrowser():
     def runBrowser(self):
-        driver = webdriver.Firefox()
+        driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
         return(driver)
     
 
@@ -50,6 +53,7 @@ class BrowserFactory(metaclass=Singleton):
         
         try:
             if browsertype == BROWSERS[BROWSERS.index(browsertype)]:
+                
                 driver = ChromeBrowser().runBrowser()
                 #driver.set_window_size(get.resolutionH, get.resolutionW)
                 driver.maximize_window()
@@ -68,7 +72,7 @@ class BrowserFactory(metaclass=Singleton):
         
 
 
-class TestMainPage(BrowserFactory):
+class TestMainPage():
     def test_checkPage(self):
         PAGE = get.SITE
         driver.get(PAGE) 
@@ -77,7 +81,7 @@ class TestMainPage(BrowserFactory):
         
         
 
-class TestAutorize(BrowserFactory):
+class TestAutorize():
     def test_checkPage(self):
         enter = driver.find_element_by_xpath("//span[contains(text(),'Войти')]/..")
         enter.click()
@@ -161,11 +165,12 @@ class TestCategiriesAtMainPage():
             if cat.is_displayed(): #13
                 catTXT = cat.find_element_by_xpath("div/a/span").text
                 x6.append(catTXT)
+        
         for elem in x6:
             assert elem in x3 == True, "Элемент '"+ elem +"' отсутствует в «Популярные категории»"
             
 
-class TestLogOut(BrowserFactory):
+class TestLogOut():
     def test_logout(self):
         time.sleep(2)
         TestMainPage().test_checkPage()
@@ -181,7 +186,7 @@ class TestLogOut(BrowserFactory):
         assert enter == "Войти"
         
         
-class TestStop(BrowserFactory):
+class TestStop():
     def test_seleniumQuit(self):
         time.sleep(2)
         driver.stop_client()
